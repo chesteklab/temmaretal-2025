@@ -262,7 +262,7 @@ def fits_offline(mk_name, date, runs, preprocess=True, train_rr=True, train_ds=T
 
         distspec = subfigs[1,0].subgridspec(2,4)
         klax = fitFig.add_subplot(subfigs[1,1])
-        if mk_name == 'Batman':
+        if mk_name == 'Monkey_W':
             plotrange = np.arange(599, 662)
         else:
             plotrange = np.arange(1499, 1562)
@@ -288,16 +288,16 @@ def fits_offline(mk_name, date, runs, preprocess=True, train_rr=True, train_ds=T
                 for spine in cb_ax.spines.values():
                     spine.set_visible(False)
             if i == 0:
-                if mk_name == 'Batman':
+                if mk_name == 'Monkey_W':
                     ax.set(ylabel='Velocity (Flex/Sec)', yticks=(-2,0,2))
                 else:
                     ax.set(ylabel='Velocity (Flex/Sec)', yticks=(-1,0,1,2))
             else:
-                if mk_name == 'Batman':
+                if mk_name == 'Monkey_W':
                     ax.set_yticks((-2,0,2), labels=[])
                 else:
                     ax.set_yticks((-1,0,1,2), labels=[])
-            if mk_name == 'Batman':
+            if mk_name == 'Monkey_W':
                 ax.set(xlabel='Time (sec)',title=predLabels[i], ylim=(-2.25,2.25),
                    xlim=(times[0],times[-1]),xticks=(30,31,32,33))
             else:
