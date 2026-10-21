@@ -28,9 +28,11 @@ After the data is downloaded, set the paths in `config.yaml`. These four entries
 | `model_dir` | Trained decoders |
 | `results_dir` | Figures, tables, and saved metrics |
 
+At startup, `generateFiguresAndAnalyses.py` creates `data_dir`, `model_dir`, and `results_dir` if they do not exist, and relevant subfolders within them (each subfolder relates to one of the analysis blocks in the top-level generate script).
+
 `architectures_path` and `training_params_path` point at `network_architectures.yaml` and `training_params.yaml` in this repository. Leave those as they are unless you move those files.
 
-`raw_data_dir` should look like this. The folder names `Monkey_N` and `Monkey_W` are the names the scripts pass as `mk_name`, and each `.npy` filename is built from that folder name, the date, and the run:
+After downloading, `raw_data_dir` should look like this. The folder names `Monkey_N` and `Monkey_W` are the names the scripts pass as `mk_name`, and each `.npy` filename is built from that folder name, the date, and the run:
 
 ```
 raw_data_dir/
@@ -43,14 +45,6 @@ raw_data_dir/
       Run-003/
         Z_Monkey_W_2020-12-08_Run-003.npy
 ```
-
-At startup, `generateFiguresAndAnalyses.py` creates `data_dir`, `model_dir`, and `results_dir` if they do not exist, then creates these subfolders inside them.
-
-Under `data_dir`: `fits_offline`, `fits_online`, `context_offline`, `variance_online`
-
-Under `model_dir`: `fits_offline`, `fits_online`, `context_offline`, `variance_offline`
-
-Under `results_dir`: `fits_offline`, `fits_online`, `context_offline`, `variance_offline`, `variance_online`
 
 ## 3. Running the code
 From the repository root, with the conda environment active:
@@ -67,4 +61,6 @@ Inside a block:
 - `train_rr`, `train_ds`, `train_tcn`, and `train_rnn` fit the decoders and write them under `model_dir`. Set a flag to `False` to load a decoder that is already saved. Online sections only have `preprocess`.
 - The context block uses one `flag` for preprocessing and for training the ridge-regression, TCN, and RNN models. `firstpart` must be `True` the first time, so the block runs the analysis instead of loading `contextResults.pkl`.
 
-Note: For the variance online figure, you need to run the variance online script in python, and then run the nested_anova.R script in R to get the stats.
+Notes:
+- For the `variance offline` figure, you need to run the `fits offline` block first to get the preprocessing done.
+- For the `variance online` figure, you need to run the `variance online` part of the script in python, and then run the `nested_anova.R` script in R to get the stats.

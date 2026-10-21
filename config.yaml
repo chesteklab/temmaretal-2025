@@ -2,10 +2,10 @@
 # are on D: so the analysis does not use the server.
 # model_dir and data_dir can be pointed somewhere else on D: if needed.
 
-raw_data_dir: "D:/temmaretal-2025/raw"
-model_dir: "D:/temmaretal-2025/Models"
-results_dir: "D:/temmaretal-2025/Results"
-data_dir: "D:/temmaretal-2025/Data"
+raw_data_dir: "<INSERT PATH TO RAW DATA>"
+model_dir: "<INSERT DESIRED PATH TO MODELS>"
+results_dir: "<INSERT DESIRED PATH TO RESULTS>"
+data_dir: "<INSERT DESIRED PATH TO DATA>"
 
 architectures_path: "network_architectures.yaml"
 training_params_path: "training_params.yaml"
