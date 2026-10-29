@@ -16,7 +16,7 @@ That file matches the `temmaretal-2025` environment used for this analysis: Pyth
 
 ### 2. Downloading the data
 
-[To be filled in.]
+The data can be downloaded through Deep Blue Data, U-M's data depository, [here](https://deepblue.lib.umich.edu/data/concern/data_sets/z316q2934). Since the dataset is larger than 5GB, it needs to be downloaded using Globus. You will have to make a Globus account to download it. Once downloaded, extract raw.zip and move the raw folder wherever you'd like.
 
 ### 3. Where to put the data
 After the data is downloaded, set the paths in `config.yaml`. These four entries are the ones to change:
