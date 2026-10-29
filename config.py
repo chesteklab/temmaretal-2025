@@ -7,6 +7,7 @@ import torch
 from matplotlib import font_manager
 import seaborn as sns
 import os
+import yaml
 #some basic text parameters for figures
 mpl.rcParams['font.family'] = "Atkinson Hyperlegible" # if installed but not showing up, rebuild mpl cache
 mpl.rcParams['font.size'] = 12
@@ -68,18 +69,17 @@ binsize = 50
 numChans = 96
 batch_size = 64
 
-# for linux
-server_dir = '/run/user/1000/gvfs/smb-share:server=cnpl-drmanhattan.engin.umich.edu,share=share'
-#for windows
-#server_dir = 'Z:\\'
-raw_data_dir = os.path.join(server_dir, 'Data/Monkeys')
-# raw_data_dir = 'Z:\Data\Monkeys'
-output_dir = os.path.join(server_dir, 'Student Folders/Hisham_Temmar/tcFNNPaper/revision_wayne')
-model_dir = os.path.join(output_dir,'Models')
-results_dir = os.path.join(output_dir,'Results')
-data_dir = os.path.join(output_dir,'Data')
-architectures_path = os.path.join(os.getcwd(), 'network_architectures.yaml')
-training_params_path = os.path.join(os.getcwd(), 'training_params.yaml')
+_dir = os.path.dirname(__file__)
+with open(os.path.join(_dir, 'config.yaml')) as f:
+    _paths = yaml.safe_load(f)
 
-device = torch.device('cuda:0')
+raw_data_dir = _paths['raw_data_dir']
+model_dir = _paths['model_dir']
+results_dir = _paths['results_dir']
+data_dir = _paths['data_dir']
+architectures_path = os.path.join(_dir, _paths['architectures_path'])
+training_params_path = os.path.join(_dir, _paths['training_params_path'])
+
+# device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cpu')
 dtype = torch.float

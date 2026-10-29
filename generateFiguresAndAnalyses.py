@@ -11,11 +11,25 @@ import pickle
 import matplotlib.pyplot as plt
 import sys
 
-# Monkey N
+# Prep folders if they don't exist yet
+output_folders = {
+    config.data_dir: ('fits_offline', 'fits_online', 'context_offline', 'variance_online'),
+    config.model_dir: ('fits_offline', 'fits_online', 'context_offline', 'variance_offline'),
+    config.results_dir: ('fits_offline', 'fits_online', 'context_offline', 'variance_offline', 'variance_online'),
+}
+for parent, subfolders in output_folders.items():
+    os.makedirs(parent, exist_ok=True)
+    for name in subfolders:
+        os.makedirs(os.path.join(parent, name), exist_ok=True)
+
+
+# EACH FIGURE IS CONTAINED WITHIN AN IF STATEMENT, SET THE CORRESPONDING FLAG TO FALSE TO NOT RUN THAT FIGURE
+
+# Monkey_N
 ## Offline Fit of Velocity Distribution 
 run_section = True
 if run_section:
-    mk_name = 'Joker'
+    mk_name = 'Monkey_N'
     dates = ['2021-02-16',
              '2021-04-12',
              '2022-06-16',
@@ -36,8 +50,8 @@ if run_section:
 
             genfig = i == fignum
 
-            metrics, fitfig, mseax, klax = fits_offline(mk_name, date, runs, preprocess=False, train_rr=False,
-                                                        train_ds=False, train_tcn=False, train_rnn=False, genfig=genfig, short_day=False)
+            metrics, fitfig, mseax, klax = fits_offline(mk_name, date, runs, preprocess=True, train_rr=True,
+                                                        train_ds=True, train_tcn=True, train_rnn=True, genfig=genfig, short_day=False)
             results.append(metrics)
 
             if genfig:
@@ -57,7 +71,7 @@ if run_section:
 ## Online Velocity Distribution Comparisons 
 run_section = False
 if run_section:
-    mk_name = 'Joker'
+    mk_name = 'Monkey_N'
     dates = ['2020-09-12',
              '2020-09-19',
              '2021-07-31'] #add another opt day
@@ -77,7 +91,7 @@ if run_section:
     for i, (date, run, dclabs, off2) in enumerate(zip(dates, runs, decoderlabels, offby2)):
         genfig = i == fignum
 
-        kldiv, ax, distaxs, fig, metrics = fits_online(mk_name, date, run, dclabs, offby2=off2, preprocess=False)
+        kldiv, ax, distaxs, fig, metrics = fits_online(mk_name, date, run, dclabs, offby2=off2, preprocess=True)
         kldivs.append(kldiv)
 
         results.append(metrics)
@@ -93,9 +107,9 @@ if run_section:
     finalfig.savefig(os.path.join(config.results_dir,'fits_online',f'onlineFitFigure_{dates[fignum]}_{mk_name}.pdf'))
 
 ## Offline tcFNN Training Variance 
-run_section = False
+run_section = True
 if run_section:
-    mk_name = 'Joker'
+    mk_name = 'Monkey_N'
     dates = ['2021-02-16','2021-04-12', '2022-06-16', '2022-09-06']
     genfig = [False, True, False, False]
     fig = None
@@ -113,7 +127,7 @@ if run_section:
     # run the analysis for each day
     for date, gfig in zip(dates, genfig):
         #run variance offline analysis with standard data
-        varfig, axs, metrics, hist, std_dev = variance_offline(mk_name, date, gfig, train_models=False, calculate_results=False)
+        varfig, axs, metrics, hist, std_dev = variance_offline(mk_name, date, gfig, train_models=True, calculate_results=True)
         if gfig:
             axes = axs
             fig = varfig
@@ -122,7 +136,7 @@ if run_section:
         sds.append(std_dev)
 
         #run  variance offline analysis with normalized data
-        varfig, axs, metrics, hist, std_dev = variance_offline(mk_name, date, gfig, train_models=False, calculate_results=False, normalize_data=True)
+        varfig, axs, metrics, hist, std_dev = variance_offline(mk_name, date, gfig, train_models=True, calculate_results=True, normalize_data=True)
         if gfig:
             axes_n = axs
             fig_n = varfig
@@ -142,7 +156,7 @@ if run_section:
 ## Online tcFNN Training Variance 
 run_section = False
 if run_section:
-    mk_name = 'Joker'
+    mk_name = 'Monkey_N'
 
     dates = ['2022-02-02',
              '2023-01-31',
@@ -173,10 +187,10 @@ if run_section:
 ## Context Shifting Offline
 run_section = False
 if run_section:
-    firstpart = False
+    firstpart = True
     if firstpart:
         results = []
-        mk_name = 'Joker'
+        mk_name = 'Monkey_N'
         dates = ['2022-05-31',
                  '2022-06-02',
                  '2023-01-17',
@@ -193,10 +207,8 @@ if run_section:
                   ['Spring', 'SprWrst', 'Normal', 'Wrist'],
                   ['SprWrst', 'Wrist', 'Normal', 'Spring']]
 
-        flag = False
+        flag = True
         for date, run, label in zip(dates, runs, labels):
-            if date == '2023-04-07':
-                flag = False
             metrics = context_offline(mk_name, date, run, label,
                                       preprocess=flag, train_rr=flag, train_tcn=flag, train_rnn=flag)
             results.append(metrics)
@@ -212,9 +224,9 @@ if run_section:
 
 # Monkey W
 ## Offline Fit of Velocity Distribution 
-run_section = True
+run_section = False
 if run_section:
-    mk_name = 'Batman'
+    mk_name = 'Monkey_W'
     dates = ['2020-11-21',
              '2020-12-08',
              '2020-12-23',
@@ -241,8 +253,8 @@ if run_section:
 
             genfig = i == fignum
 
-            metrics, fitfig, mseax, klax = fits_offline(mk_name, date, runs, preprocess=False, train_rr=False,
-                                                        train_ds=False, train_tcn=False, train_rnn=False, genfig=genfig, short_day=short_day[i])
+            metrics, fitfig, mseax, klax = fits_offline(mk_name, date, runs, preprocess=True, train_rr=True,
+                                                        train_ds=True, train_tcn=True, train_rnn=True, genfig=genfig, short_day=short_day[i])
             results.append(metrics)
 
             if genfig:
@@ -262,7 +274,7 @@ if run_section:
 ## Online Velocity Distribution Comparisons
 run_section = False
 if run_section:
-    mk_name = 'Batman'
+    mk_name = 'Monkey_W'
     dates = ['2020-11-21',
              '2020-12-08',
              '2020-12-23']
@@ -283,7 +295,7 @@ if run_section:
     for i, (date, run, dclabs, off2) in enumerate(zip(dates, runs, decoderlabels, offby2)):
         genfig = i == fignum
 
-        kldiv, ax, distaxs, fig, metrics = fits_online_w(mk_name, date, run, dclabs, offby2=off2, preprocess=False, genfig=genfig)
+        kldiv, ax, distaxs, fig, metrics = fits_online_w(mk_name, date, run, dclabs, offby2=off2, preprocess=True, genfig=genfig)
         kldivs.append(kldiv)
 
         results.append(metrics)
@@ -301,7 +313,7 @@ if run_section:
 ## Offline tcFNN Training Variance
 run_section = False
 if run_section:
-    mk_name = 'Batman'
+    mk_name = 'Monkey_W'
     dates = ['2020-11-21',
              '2020-12-08',
              '2020-12-23',

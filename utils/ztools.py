@@ -33,32 +33,7 @@ class mat_struct_sim(object):
 
 def ZStructTranslator(source_dir, out_dir, overwrite=False, numChans=96, verbose=True):
     '''
-    This function translates the File Logger binaries into dictionaries. Most of the work is directly taken from Scott
-    Ensel's ZStructTranslator class, created in 2019-2020
-
-    since the original .npy loading depends on loading object arrays, existing zarrays will use try to use pybmi - so need to regen them somewhere else to keep code independent
-    this also means we don't need to use the .mat portions - will just recreate the zarrays from scratch and put them in the data folder as well
-
-    Inputs:	direc:		- the directory from which to grab the data
-           	overwrite:	Default: does NOT overwrite previous zstruct in folder
-           				- False: to load any previous zStruct in the folder, if available
-                          - True: to read .bin files and overwrite or save z struct file
-                          - if overwrite is true use_py argument does not matter
-              use_py:     Default: loads in .mat first
-                          - False: loads in .mat file
-                          - True: loads in .npy file
-              numChans:   Default: 96 channels
-                          - number of channels recorded on
-              verbose:    Default: True
-    Returns: z:         - the zstruct in zarray format. Can be treated with all the normal operations used on object np.ndarrays,
-                            plus some extra functions
-
-    NOTE: Make sure the folder path includes the entire directory structure
-          with  (i.e. the name\date\run folders).
-    NOTE: This script assumes that neural data is sent as variable length
-          packets with an EndPacket byte of 255. It also assumes that there
-          is exactly 1 feature in each neural packet.
-    Based on ZStructTranslator.m written by Zach Irwin
+    Based on previous work by Zach Irwin and Scott Ensel, though this version has been modified and is really only used to load the .npy files.
     '''
 
     # loops over multiple characters to put into a single string
@@ -88,24 +63,27 @@ def ZStructTranslator(source_dir, out_dir, overwrite=False, numChans=96, verbose
     path = os.path.normpath(source_dir)  # this is system independent splitting of path
     folders = path.split(os.sep) # this is system independent splitting of path
 
-    # check for previous zStruct
+    # Available data is distributed as .npy Z structs only.
     z_filename = "Z_" + folders[-3] + "_" + folders[-2] + "_" + folders[-1] + ".npy" #this is full .npy filename
     z_fullpath = os.path.join(out_dir, z_filename)
+    npy_path = None
+    if not overwrite:
+        for candidate in (os.path.join(source_dir, z_filename), z_fullpath):
+            if os.path.isfile(candidate):
+                npy_path = candidate
+                break
 
-    # if loading data in checks to see if previous file exists
-    if (not overwrite and os.path.isfile(z_fullpath)):
+    if npy_path is not None:
         if verbose:
-            print('Loading previous .npy Z struct . . . ')
-
-        z = np.load(z_fullpath, allow_pickle=True).tolist()
+            print('Loading .npy Z struct from {}'.format(npy_path))
+        z = np.load(npy_path, allow_pickle=True).tolist()
         z = zarray(z)
         if verbose:
             print('Finished loading .npy file')
         return z
 
     else:
-        if not overwrite and not os.path.isfile(z_fullpath):
-            print("{} not found. Please check directory".format(z_filename))
+        print("{} not found. Please check directory".format(z_filename))
         print("Overwriting previous .npy Z Struct or no .npy file found. Creating new one . . .")
 
         try:

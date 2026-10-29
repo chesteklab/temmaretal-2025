@@ -18,9 +18,6 @@ import config
 
 
 def variance_offline(mk_name, date, genfig, train_models=True, calculate_results=False, normalize_data = False):
-    #setup pytorch stuff
-    device = torch.device('cuda:0')
-    dtype = torch.float
 
     # for now, run after decoder_fits_offline
     print('loading data')
@@ -29,11 +26,11 @@ def variance_offline(mk_name, date, genfig, train_models=True, calculate_results
     print('data loaded')
 
     #separate and turn into tensors (no rr here)
-    neu_train = torch.from_numpy(trainData['neu3D'][2]).to(device, dtype)
-    vel_train = torch.from_numpy(trainData['vel'][2]).to(device, dtype)
+    neu_train = torch.from_numpy(trainData['neu3D'][2]).to(config.device, config.dtype)
+    vel_train = torch.from_numpy(trainData['vel'][2]).to(config.device, config.dtype)
 
-    neu_test = torch.from_numpy(testData['neu3D']).to(device, dtype)
-    vel_test = torch.from_numpy(testData['vel']).to(device, dtype)
+    neu_test = torch.from_numpy(testData['neu3D']).to(config.device, config.dtype)
+    vel_test = torch.from_numpy(testData['vel']).to(config.device, config.dtype)
     
     if normalize_data:
         # normalize neural data (new by JC)
@@ -137,7 +134,7 @@ def variance_offline(mk_name, date, genfig, train_models=True, calculate_results
             # get test predictions, calculate MSE for each.
             for i in range(num_models):
                 # get test predictions for models trained on non-normalized data
-                model = models[key][i].to(device)
+                model = models[key][i].to(config.device)
                 model.eval()
                 
                 ## get prediction and scale to MR/sec
@@ -187,7 +184,7 @@ def variance_offline(mk_name, date, genfig, train_models=True, calculate_results
         hist_ax = analysis_axes[1]
         sd_ax = analysis_axes[2]
         
-        if mk_name == 'Joker':
+        if mk_name == 'Monkey_N':
             plotrange = np.arange(1499, 1562)
         else:
             plotrange = np.arange(599, 662)
